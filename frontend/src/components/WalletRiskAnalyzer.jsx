@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, Bar, ResponsiveContainer } from 'recharts';
 import { AlertTriangle, Shield, Activity, Coins, TrendingUp, Calendar, AlertCircle, CheckCircle, XCircle, Search, Loader } from 'lucide-react';
+import './WalletRiskAnalyzer.css';
 
 const WalletRiskAnalyzer = () => {
   const [walletAddress, setWalletAddress] = useState('');
@@ -40,19 +41,18 @@ const WalletRiskAnalyzer = () => {
 }
   }
 
-
   const getRiskColor = (score) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
-    return 'text-red-600';
+    if (score >= 80) return 'risk-low';
+    if (score >= 60) return 'risk-medium';
+    if (score >= 40) return 'risk-high';
+    return 'risk-critical';
   };
 
   const getRiskBgColor = (score) => {
-    if (score >= 80) return 'bg-green-100 border-green-300';
-    if (score >= 60) return 'bg-yellow-100 border-yellow-300';
-    if (score >= 40) return 'bg-orange-100 border-orange-300';
-    return 'bg-red-100 border-red-300';
+    if (score >= 80) return 'risk-bg-low';
+    if (score >= 60) return 'risk-bg-medium';
+    if (score >= 40) return 'risk-bg-high';
+    return 'risk-bg-critical';
   };
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
@@ -123,22 +123,22 @@ const WalletRiskAnalyzer = () => {
   ] : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="wallet-analyzer">
+      <div className="container">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
-            <Shield className="text-blue-400" size={40} />
+        <div className="header">
+          <h1 className="title">
+            <Shield className="title-icon" size={40} />
             Wallet Risk Analyzer
           </h1>
-          <p className="text-gray-300 text-lg">Comprehensive blockchain wallet security assessment</p>
+          <p className="subtitle">Comprehensive blockchain wallet security assessment</p>
         </div>
 
         {/* Input Section */}
-        <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 mb-8 border border-white/20">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <label className="block text-white text-sm font-medium mb-2">
+        <div className="input-section">
+          <div className="input-wrapper">
+            <div className="input-group">
+              <label className="input-label">
                 Ethereum Wallet Address
               </label>
               <input
@@ -146,27 +146,27 @@ const WalletRiskAnalyzer = () => {
                 value={walletAddress}
                 onChange={(e) => setWalletAddress(e.target.value)}
                 placeholder="0x742d35Cc6634C0532925a3b8D362579bB2137c41"
-                className="w-full px-4 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="wallet-input"
               />
               {error && (
-                <p className="text-red-400 text-sm mt-2 flex items-center gap-2">
+                <p className="error-message">
                   <AlertCircle size={16} />
                   {error}
                 </p>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="button-group">
               <button
                 onClick={analyzeWallet}
                 disabled={loading}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 flex items-center gap-2"
+                className="btn btn-primary"
               >
-                {loading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
+                {loading ? <Loader className="btn-icon animate-spin" size={20} /> : <Search size={20} />}
                 {loading ? 'Analyzing...' : 'Analyze'}
               </button>
               <button
                 onClick={handleDemoMode}
-                className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-teal-700 transition-all duration-200"
+                className="btn btn-demo"
               >
                 Demo
               </button>
@@ -176,52 +176,52 @@ const WalletRiskAnalyzer = () => {
 
         {/* Analysis Results */}
         {analysis && (
-          <div className="space-y-8">
+          <div className="results-section">
             {/* Risk Score Card */}
-            <div className={`${getRiskBgColor(analysis.risk_analysis.risk_score)} backdrop-blur-md rounded-xl p-6 border-2`}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+            <div className={`risk-card ${getRiskBgColor(analysis.risk_analysis.risk_score)}`}>
+              <div className="risk-header">
+                <h2 className="risk-title">
                   <Shield size={28} />
                   Risk Assessment
                 </h2>
-                <div className="text-right">
-                  <div className={`text-4xl font-bold ${getRiskColor(analysis.risk_analysis.risk_score)}`}>
+                <div className="risk-score-display">
+                  <div className={`risk-score ${getRiskColor(analysis.risk_analysis.risk_score)}`}>
                     {analysis.risk_analysis.risk_score}/100
                   </div>
-                  <div className={`text-lg font-semibold ${getRiskColor(analysis.risk_analysis.risk_score)}`}>
+                  <div className={`risk-level ${getRiskColor(analysis.risk_analysis.risk_score)}`}>
                     {analysis.risk_analysis.risk_level}
                   </div>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div className="bg-white/50 rounded-lg p-3">
-                  <div className="text-sm text-gray-600">Wallet Age</div>
-                  <div className="text-lg font-semibold">{analysis.risk_analysis.wallet_age_days} days</div>
+              <div className="metrics-grid">
+                <div className="metric-card">
+                  <div className="metric-label">Wallet Age</div>
+                  <div className="metric-value">{analysis.risk_analysis.wallet_age_days} days</div>
                 </div>
-                <div className="bg-white/50 rounded-lg p-3">
-                  <div className="text-sm text-gray-600">Total Transactions</div>
-                  <div className="text-lg font-semibold">{analysis.risk_analysis.total_transactions.toLocaleString()}</div>
+                <div className="metric-card">
+                  <div className="metric-label">Total Transactions</div>
+                  <div className="metric-value">{analysis.risk_analysis.total_transactions.toLocaleString()}</div>
                 </div>
-                <div className="bg-white/50 rounded-lg p-3">
-                  <div className="text-sm text-gray-600">Token Diversity</div>
-                  <div className="text-lg font-semibold">{analysis.risk_analysis.token_diversity} tokens</div>
+                <div className="metric-card">
+                  <div className="metric-label">Token Diversity</div>
+                  <div className="metric-value">{analysis.risk_analysis.token_diversity} tokens</div>
                 </div>
-                <div className="bg-white/50 rounded-lg p-3">
-                  <div className="text-sm text-gray-600">Balance</div>
-                  <div className="text-lg font-semibold">{analysis.risk_analysis.balance_eth} ETH</div>
+                <div className="metric-card">
+                  <div className="metric-label">Balance</div>
+                  <div className="metric-value">{analysis.risk_analysis.balance_eth} ETH</div>
                 </div>
               </div>
 
               {analysis.risk_analysis.warnings.length > 0 && (
-                <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2 flex items-center gap-2">
+                <div className="warnings-section">
+                  <h3 className="warnings-title">
                     <AlertTriangle size={20} />
                     Warnings
                   </h3>
-                  <ul className="space-y-1">
+                  <ul className="warnings-list">
                     {analysis.risk_analysis.warnings.map((warning, index) => (
-                      <li key={index} className="text-yellow-700 text-sm flex items-center gap-2">
+                      <li key={index} className="warning-item">
                         <XCircle size={16} />
                         {warning}
                       </li>
@@ -232,10 +232,10 @@ const WalletRiskAnalyzer = () => {
             </div>
 
             {/* Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="charts-grid">
               {/* Activity Timeline */}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <div className="chart-card">
+                <h3 className="chart-title">
                   <Activity size={24} />
                   Activity Timeline
                 </h3>
@@ -260,8 +260,8 @@ const WalletRiskAnalyzer = () => {
               </div>
 
               {/* Token Distribution */}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <div className="chart-card">
+                <h3 className="chart-title">
                   <Coins size={24} />
                   Token Distribution
                 </h3>
@@ -294,8 +294,8 @@ const WalletRiskAnalyzer = () => {
               </div>
 
               {/* Risk Profile Radar */}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <div className="chart-card">
+                <h3 className="chart-title">
                   <TrendingUp size={24} />
                   Risk Profile
                 </h3>
@@ -329,33 +329,33 @@ const WalletRiskAnalyzer = () => {
               </div>
 
               {/* Transaction Summary */}
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <div className="chart-card">
+                <h3 className="chart-title">
                   <Calendar size={24} />
                   Transaction Summary
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">First Transaction:</span>
-                    <span className="text-white font-mono text-sm">
+                <div className="summary-content">
+                  <div className="summary-row">
+                    <span className="summary-label">First Transaction:</span>
+                    <span className="summary-value">
                       {new Date(analysis.tx_summary.first_transaction).toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Last Transaction:</span>
-                    <span className="text-white font-mono text-sm">
+                  <div className="summary-row">
+                    <span className="summary-label">Last Transaction:</span>
+                    <span className="summary-value">
                       {new Date(analysis.tx_summary.last_transaction).toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Total Volume:</span>
-                    <span className="text-white font-semibold">
+                  <div className="summary-row">
+                    <span className="summary-label">Total Volume:</span>
+                    <span className="summary-value summary-highlight">
                       {analysis.tx_summary.total_volume_eth} ETH
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-300">Avg Tx/Day:</span>
-                    <span className="text-white font-semibold">
+                  <div className="summary-row">
+                    <span className="summary-label">Avg Tx/Day:</span>
+                    <span className="summary-value summary-highlight">
                       {analysis.tx_summary.average_tx_per_day}
                     </span>
                   </div>
@@ -364,48 +364,48 @@ const WalletRiskAnalyzer = () => {
             </div>
 
             {/* Additional Metrics */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <div className="security-metrics">
+              <h3 className="section-title">
                 <AlertTriangle size={24} />
                 Security Metrics
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white/10 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-red-400 mb-2">
+              <div className="security-grid">
+                <div className="security-metric">
+                  <div className="security-value security-critical">
                     {analysis.risk_analysis.suspicious_interactions}
                   </div>
-                  <div className="text-gray-300 text-sm">Suspicious Interactions</div>
+                  <div className="security-label">Suspicious Interactions</div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-orange-400 mb-2">
+                <div className="security-metric">
+                  <div className="security-value security-warning">
                     {analysis.risk_analysis.contract_approvals}
                   </div>
-                  <div className="text-gray-300 text-sm">Risky Approvals</div>
+                  <div className="security-label">Risky Approvals</div>
                 </div>
-                <div className="bg-white/10 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-green-400 mb-2">
+                <div className="security-metric">
+                  <div className="security-value security-status">
                     {analysis.risk_analysis.risk_score >= 80 ? '✓' : analysis.risk_analysis.risk_score >= 60 ? '⚠' : '✗'}
                   </div>
-                  <div className="text-gray-300 text-sm">Overall Status</div>
+                  <div className="security-label">Overall Status</div>
                 </div>
               </div>
             </div>
 
             {/* Footer Info */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h4 className="text-white font-semibold mb-2">Analysis Details</h4>
-                  <p className="text-gray-300 text-sm">
+            <div className="footer-info">
+              <div className="footer-content">
+                <div className="analysis-details">
+                  <h4 className="footer-title">Analysis Details</h4>
+                  <p className="footer-text">
                     Analyzed: {new Date(analysis.wallet_metadata.analysis_timestamp).toLocaleString()}
                   </p>
-                  <p className="text-gray-300 text-sm">
+                  <p className="footer-text">
                     Data Sources: {analysis.wallet_metadata.data_sources.join(', ')}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 text-green-400">
+                <div className="status-indicator">
                   <CheckCircle size={20} />
-                  <span className="text-sm">Analysis Complete</span>
+                  <span className="status-text">Analysis Complete</span>
                 </div>
               </div>
             </div>
@@ -414,12 +414,12 @@ const WalletRiskAnalyzer = () => {
 
         {/* Empty State */}
         {!analysis && !loading && (
-          <div className="text-center py-16">
-            <Shield className="mx-auto text-gray-500 mb-4" size={64} />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">
+          <div className="empty-state">
+            <Shield className="empty-icon" size={64} />
+            <h3 className="empty-title">
               Ready to Analyze
             </h3>
-            <p className="text-gray-500">
+            <p className="empty-description">
               Enter an Ethereum wallet address to get started with risk analysis
             </p>
           </div>
@@ -430,4 +430,3 @@ const WalletRiskAnalyzer = () => {
 };
 
 export default WalletRiskAnalyzer;
-                  
