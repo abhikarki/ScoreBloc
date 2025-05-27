@@ -1,14 +1,14 @@
-# 🔒 Wallet Risk Analyzer
+# 🔒 ScoreBloc
 
-**Comprehensive Ethereum Wallet Risk Analysis & Visualization Tool**
+**Comprehensive Blockchain Wallet Risk Analysis & Visualization Tool**
 
-The Wallet Risk Analyzer is a web-based platform that allows users to input any Ethereum wallet address and receive a detailed risk assessment. It analyzes smart contract interactions, transaction activity, token holdings, and more — all presented through beautiful, interactive visualizations.
+ScoreBloc is a web-based platform that allows users to input any Blockchain wallet address and receive a detailed risk assessment. It analyzes smart contract interactions, transaction activity, token holdings, and more — all presented through beautiful, interactive visualizations.
 
 ---
 
 ## 📸 Demo Preview
 
-![Wallet Risk Analyzer Screenshot](./preview.png) <!-- Replace with actual screenshot path -->
+![Wallet Risk Analyzer Screenshot](./preview.png) <!-- In Progress -->
 
 ---
 
