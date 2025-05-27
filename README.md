@@ -19,7 +19,7 @@ ScoreBloc is a web-based platform that allows users to input any Blockchain wall
   - Line chart of transaction count and volume over time
   - Radar chart of key risk components
   - Pie chart of token holdings
-- 🛡 **Security Warnings**: Flags suspicious behavior like contract approvals or interaction with known scam addresses.
+-  **Security Warnings**: Flags suspicious behavior like contract approvals or interaction with known scam addresses.
 -  **Demo Mode**: Use mock data without querying a real wallet.
 -  **Responsive UI**: Fully responsive and mobile-friendly with modern design using Tailwind CSS.
 
@@ -32,10 +32,9 @@ ScoreBloc is a web-based platform that allows users to input any Blockchain wall
 | **React.js** | Frontend framework |
 | **Tailwind CSS** | Styling and layout |
 | **Recharts** | Interactive charts and visualizations |
-| **Lucide Icons** | Iconography |
 | **Python / FastAPI**  | Backend wallet analysis logic (Extraction and Analysis of wallet's historical data) |
 
 ---
 
-## 🧰 Project Structure
+##  Project Structure
 
