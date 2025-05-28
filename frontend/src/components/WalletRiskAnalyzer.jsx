@@ -129,7 +129,7 @@ const WalletRiskAnalyzer = () => {
         <div className="header">
           <h1 className="title">
             <Shield className="title-icon" size={40} />
-            Wallet Risk Analyzer
+            ScoreBloc
           </h1>
           <p className="subtitle">Comprehensive blockchain wallet security assessment</p>
         </div>
