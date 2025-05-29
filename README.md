@@ -2,7 +2,7 @@
 
 **Comprehensive Blockchain Wallet Risk Analysis & Visualization Tool**
 
-ScoreBloc is a web-based platform that allows users to input any Blockchain wallet address and receive a detailed risk assessment. It analyzes smart contract interactions, transaction activity, token holdings, and more — all presented through beautiful, interactive visualizations.
+ScoreBloc is a web-based platform that allows users to input Blockchain wallet address and receive a detailed risk assessment. It analyzes transaction activity, token holdings, risk profile and more — all presented through beautiful, interactive visualizations.
 
 ---
 
