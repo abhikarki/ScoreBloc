@@ -14,6 +14,11 @@ async def analyze_wallet(wallet_address: str):
         "address": wallet_address
     }
 
+    balance_call_params = {
+        "chain" : "eth",
+        "address": wallet_address,
+    }
+
     # Fetch wallet history
     history = evm_api.wallets.get_wallet_history(api_key=api_key, params=params)
     transactions = history.get("result", [])
@@ -24,8 +29,10 @@ async def analyze_wallet(wallet_address: str):
     # Extract metrics
     tx_count = len(transactions)
 
+    # Set of tokens
     erc20_tokens = set()
 
+    # Getting the tokens and token diversity
     for tx in transactions:
         for transfer in tx.get("erc20_transfer", []):
             symbol = transfer.get("token_symbol")
@@ -39,23 +46,27 @@ async def analyze_wallet(wallet_address: str):
     last_tx_time = transactions[0]["block_timestamp"]
     wallet_age_days = get_wallet_age_days(first_tx_time)
 
-    # Volume
+    # Volume(this is only ETH)
     total_volume_eth = sum(
         int(tx.get("value", "0")) / 1e18
         for tx in transactions
         if "value" in tx
     )
 
-    balance_eth = 0  # optional: call Moralis balance endpoint
+    # Native Balance i.e getting the ETH balance of the wallet
+    balance_call = evm_api.balance.get_native_balance(api_key=api_key, params=balance_call_params)
+    balance_eth = (balance_call.get("balance") or 0.0 ) / 1e18
 
-    # Risk Score
+    # Risk Score using a simple model
     score = (
         min(wallet_age_days / 365, 1.0) * 25 +
         min(tx_count / 1000, 1.0) * 25 +
         min(token_diversity / 20, 1.0) * 25 +
         (1.0 if total_volume_eth > 1 else 0.5) * 25
     )
+
     risk_score = round(score)
+    # Get the risk level based on the score
     risk_level = classify_risk_level(risk_score)
 
     return {
