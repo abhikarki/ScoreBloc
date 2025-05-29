@@ -9,7 +9,10 @@ const WalletRiskAnalyzer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+
+  // Send a request to the backend to analyze the wallet address and receive the data
   const analyzeWallet = async () => {
+    // Validate wallet address format
     if (!walletAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
       setError('Please enter a valid Ethereum address');
       return;
@@ -19,28 +22,33 @@ const WalletRiskAnalyzer = () => {
     setError('');
     
     try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/analyze`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ wallet_address: walletAddress }),
-  });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ wallet_address: walletAddress }),
+    });
 
-  if (!response.ok) {
-    throw new Error('Analysis failed');
+    // Check the server's response
+    if (!response.ok) {
+      throw new Error('Analysis failed');
+    }
+
+    // Parse the JSON response
+    const data = await response.json();
+    setAnalysis(data);
+    } 
+    catch (err) {
+      setError('Failed to analyze wallet. Please try again.');
+      console.error(err);
+    } 
+    finally {
+      setLoading(false);
+    }
   }
 
-  const data = await response.json();
-  setAnalysis(data);
-} catch (err) {
-  setError('Failed to analyze wallet. Please try again.');
-  console.error(err);
-} finally {
-  setLoading(false);
-}
-  }
-
+  // Get the color based on the risk score
   const getRiskColor = (score) => {
     if (score >= 80) return 'risk-low';
     if (score >= 60) return 'risk-medium';
@@ -48,6 +56,7 @@ const WalletRiskAnalyzer = () => {
     return 'risk-critical';
   };
 
+  // Background color based on risk score
   const getRiskBgColor = (score) => {
     if (score >= 80) return 'risk-bg-low';
     if (score >= 60) return 'risk-bg-medium';
@@ -55,6 +64,7 @@ const WalletRiskAnalyzer = () => {
     return 'risk-bg-critical';
   };
 
+  // Colors
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
   // Mock data generation for demo when backend is not available
@@ -91,7 +101,7 @@ const WalletRiskAnalyzer = () => {
       })).reverse(),
       wallet_metadata: {
         analysis_timestamp: new Date().toISOString(),
-        data_sources: ['Etherscan', 'Alchemy', 'CryptoScamDB'],
+        data_sources: ['Moralis'],
         component_scores: {
           wallet_age: 0.8,
           transaction_count: 0.7,
@@ -106,6 +116,7 @@ const WalletRiskAnalyzer = () => {
     setAnalysis(mockData);
   };
 
+  // Generate demo data and charts
   const handleDemoMode = () => {
     if (!walletAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
       setWalletAddress('0x742d35Cc6634C0532925a3b8D362579bB2137c41');
@@ -113,14 +124,43 @@ const WalletRiskAnalyzer = () => {
     generateMockData();
   };
 
+  // Generate radar chart data if analysis exists.
+  // Return empty array if analysis is not available.
+  // Each element in the array corresponds to one axis of the radar chart.
+  // The 'A' is the score for that axis, 0-100 scale.
+  // The 'fullMark' is max value for that axis
   const radarData = analysis ? [
-    { subject: 'Wallet Age', A: analysis.wallet_metadata.component_scores.wallet_age * 100, fullMark: 100 },
-    { subject: 'Tx Count', A: analysis.wallet_metadata.component_scores.transaction_count * 100, fullMark: 100 },
-    { subject: 'Token Diversity', A: analysis.wallet_metadata.component_scores.token_diversity * 100, fullMark: 100 },
-    { subject: 'Scam Free', A: analysis.wallet_metadata.component_scores.scam_interactions * 100, fullMark: 100 },
-    { subject: 'Flash Loans', A: analysis.wallet_metadata.component_scores.flash_loan_usage * 100, fullMark: 100 },
-    { subject: 'Approvals', A: analysis.wallet_metadata.component_scores.contract_approvals * 100, fullMark: 100 }
-  ] : [];
+    { 
+      subject: 'Wallet Age',
+       A: analysis.wallet_metadata.component_scores.wallet_age * 100,
+        fullMark: 100 
+    },
+    { 
+      subject: 'Tx Count',
+       A: analysis.wallet_metadata.component_scores.transaction_count * 100, 
+      fullMark: 100 
+    },
+    { 
+      subject: 'Token Diversity',
+       A: analysis.wallet_metadata.component_scores.token_diversity * 100,
+        fullMark: 100
+    },
+    { 
+      subject: 'Scam Free',
+       A: analysis.wallet_metadata.component_scores.scam_interactions * 100,
+        fullMark: 100 
+    },
+    { 
+      subject: 'Flash Loans', 
+      A: analysis.wallet_metadata.component_scores.flash_loan_usage * 100,
+       fullMark: 100 
+    },
+    { 
+      subject: 'Approvals',
+       A: analysis.wallet_metadata.component_scores.contract_approvals * 100, 
+       fullMark: 100
+    }
+    ] : [];
 
   return (
     <div className="wallet-analyzer">
