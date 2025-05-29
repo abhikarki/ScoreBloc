@@ -1,36 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from .models import WalletRequest, WalletResponse
-from .simulator import fetch_wallet_data
-from .scorer import RiskScorer, RiskAnalysis
-from datetime import datetime
-from fastapi import HTTPException
+from app.analyer import analyze_wallet
 
-app = FastAPI(title="Wallet Risk Analyzer", version="1.0.0")
+app = FastAPI()
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Allows all origins
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
-@app.get("/")
-async def root():
-    return {"message": "Wallet Risk Analyzer API", "version": "1.0.0"}
 
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+@app.post("/analyze")
+async def analyze(request: Request):
+    data = await request.json()
+    wallet_address = data.get("wallet_address")
+    if not wallet_address:
+        return {"error": "Wallet address is required"}
 
-@app.post("/analyze", response_model=WalletResponse)
-async def analyze_wallet(request: WalletRequest):
     try:
-        wallet_data = await fetch_wallet_data(request.wallet_address)
-        scorer = RiskScorer()
-        risk_result = scorer.calculate_risk_score(wallet_data)
-        risk_analysis = RiskAnalysis.from_wallet(wallet_data, risk_result)
-        return WalletResponse.from_all(wallet_data, risk_analysis, risk_result)
+        result = await analyze_wallet(wallet_address)
+        return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        return {"error": str(e)}
